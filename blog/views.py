@@ -4,10 +4,10 @@ from .models import Post
 
 
 def post_list(request):
-    """
+    """List of posts
 
-    :param request:
-    :return:
+    :param request: request object
+    :return: HTTP Response
     """
     posts = Post.objects.all()
     return render(request,
@@ -17,12 +17,12 @@ def post_list(request):
                   })
 
 
-def post_detail(request, id_):
-    """Детальная информация о посте
+def post_detail(request, id):
+    """Post details
 
-    :param request:
-    :param id_:
-    :return:
+    :param request: request object
+    :param id: post id
+    :return: HTTP Response
     """
     post = get_object_or_404(Post,
                              id=id,
