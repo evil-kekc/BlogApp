@@ -9,7 +9,7 @@ def post_list(request):
     :param request: request object
     :return: HTTP Response
     """
-    posts = Post.objects.all()
+    posts = Post.published.all()
     return render(request,
                   'blog/post/list.html',
                   {
@@ -17,16 +17,22 @@ def post_list(request):
                   })
 
 
-def post_detail(request, id):
+def post_detail(request, year, month, day, post):
     """Post details
 
+    :param post: post slug
+    :param day: post publish day
+    :param month: post publish month
+    :param year: post publish year
     :param request: request object
-    :param id: post id
     :return: HTTP Response
     """
     post = get_object_or_404(Post,
-                             id=id,
-                             status=Post.Status.PUBLISHED)
+                             status=Post.Status.PUBLISHED,
+                             slug=post,
+                             publish__year=year,
+                             publish__month=month,
+                             publish__day=day)
 
     return render(request,
                   'blog/post/detail.html',
