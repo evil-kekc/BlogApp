@@ -1,16 +1,18 @@
 import os
 
 from django.core.mail import send_mail
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
 
 from .forms import EmailPostForm, CommentForm
 from .models import Post, Comment
 from django.views.decorators.http import require_POST
+from taggit.models import Tag
 
 
 @require_POST
-def post_comment(request, post_id):
+def post_comment_view(request, post_id):
     """Saving a comment on a post
 
     :param request: request object
@@ -42,7 +44,38 @@ class PostListView(ListView):
     template_name = 'blog/post/list.html'
 
 
-def post_detail(request, year, month, day, post):
+def post_list_view(request, tag_slug=None):
+    """Displaying posts by page
+
+    :param request: request object
+    :param tag_slug: tag slug
+    :return: HTTP Response
+    """
+    post_list = Post.published.all()
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        post_list = post_list.filter(tags__in=[tag])
+
+    paginator = Paginator(post_list, per_page=3)
+    page_number = request.GET.get('page', default=1)
+
+    try:
+        posts = paginator.page(page_number)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+
+    return render(request,
+                  'blog/post/list.html',
+                  {
+                      'posts': posts,
+                      'tag': tag
+                  })
+
+
+def post_detail_view(request, year, month, day, post):
     """Post details
 
     :param post: post slug
@@ -71,7 +104,7 @@ def post_detail(request, year, month, day, post):
                   })
 
 
-def post_share(request, post_id):
+def post_share_view(request, post_id):
     """Sending a post by email
 
     :param request: request object
