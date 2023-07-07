@@ -1,6 +1,6 @@
 import os
 
-from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, TrigramSimilarity
+from django.contrib.postgres.search import TrigramSimilarity
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import Count
@@ -102,7 +102,7 @@ def post_detail_view(request, year, month, day, post):
     similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
     count_of_similar_posts_to_show = 4
     similar_posts = similar_posts.annotate(same_tags=Count('tags')) \
-                        .order_by('-same_tags', '-publish')[:count_of_similar_posts_to_show]
+                                 .order_by('-same_tags', '-publish')[:count_of_similar_posts_to_show]
 
     return render(request,
                   'blog/post/detail.html',
