@@ -69,10 +69,15 @@ To install and run BlogApp locally, follow these steps:
    ```
 
 5. Start the application:
-   * Using Docker:
+   * Using Dockerfile:
    ```shell
-   docker build -t blogapp .
-   docker run -p 8000:8000 -d blogapp
+   sudo docker build -t blogapp .
+   sudo docker run -p 8000:8000 -d blogapp
+   ```
+   
+   * Using docker-compose
+   ```shell
+   sudo docker-compose up
    ```
    
    * Without Docker:
